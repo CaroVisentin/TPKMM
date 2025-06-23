@@ -1,0 +1,13 @@
+CREATE TABLE Characters (
+ id INTEGER NOT NULL PRIMARY KEY,
+ name TEXT NOT NULL,
+ description TEXT,
+ thumbnailUrl TEXT
+);
+
+insertCharacter:
+INSERT INTO Characters(id, name, description, thumbnailUrl)
+VALUES (?, ?, ?, ?);
+
+getAllCharacters:
+SELECT * FROM Characters;
