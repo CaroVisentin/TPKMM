@@ -71,10 +71,10 @@ android {
     }
 }
 
-//sqldelight {
-//    databases {
-//        create("MarvelDatabase") {
-//            packageName.set("com.marvel")
-//        }
-//    }
-//}
+sqldelight {
+    databases {
+        create("MarvelDatabase") {
+            packageName.set("com.marvel")
+        }
+    }
+}

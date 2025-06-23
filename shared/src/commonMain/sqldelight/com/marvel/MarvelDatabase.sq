@@ -11,3 +11,6 @@ VALUES (?, ?, ?, ?);
 
 getAllCharacters:
 SELECT * FROM Characters;
+
+deleteAll:
+DELETE FROM Characters;

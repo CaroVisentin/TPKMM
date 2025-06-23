@@ -1,5 +1,7 @@
 package com.unlam.marvelkmm2.android
 
+import com.marvel.MarvelDatabase
+import com.unlam.marvelkmm2.data.MarvelApiClient
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -7,13 +9,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.unlam.marvelkmm2.VerticalSpaceItemDecoration
-import com.unlam.marvelkmm2.CharactersAdapter
+import com.unlam.marvelkmm2.android.ui.main.VerticalSpaceItemDecoration
+import com.unlam.marvelkmm2.android.ui.main.CharactersAdapter
 import com.unlam.marvelkmm2.CharactersViewModel
 import com.unlam.marvelkmm2.android.databinding.ActivityMainBinding
+import com.unlam.marvelkmm2.android.ui.viewmodel.CharactersViewModelFactory
 import com.unlam.marvelkmm2.domain.Character
 import com.unlam.marvelkmm2.presentation.ScreenState
 import kotlinx.coroutines.launch
+import com.unlam.marvelkmm2.data.CharacterCacheRepository
+import com.unlam.marvelkmm2.data.KtorCharactersRepository
+import com.unlam.marvelkmm2.database.DatabaseDriverFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +27,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val apiClient = MarvelApiClient()
+        val driver = DatabaseDriverFactory(this).createDriver()
+        val db = MarvelDatabase(driver)
+        val cache = CharacterCacheRepository(db)
+        val repo = KtorCharactersRepository(apiClient, cache)
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -35,8 +47,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // ViewModel + UI binding
-        val viewModel =
-            ViewModelProvider(this, CharactersViewModelFactory())[CharactersViewModel::class.java]
+        val viewModel = ViewModelProvider(this, CharactersViewModelFactory(repo))
+            .get(CharactersViewModel::class.java)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
